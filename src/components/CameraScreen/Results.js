@@ -3,7 +3,8 @@ import { StyleSheet, View, Text, Button } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import PropTypes from 'prop-types';
 
-function ResultsScreen({ navigation }) {
+function ResultsScreen({ navigation, route }) {
+    console.log(route.params.faces);
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Results Screen</Text>

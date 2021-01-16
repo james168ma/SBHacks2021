@@ -176,7 +176,26 @@ function CameraScreen({ navigation }) {
             },
             body: JSON.stringify(data)
         }).then(response => response.json())
-        .then(data => console.log(data));
+        .then(resData => {
+            if(resData == null || resData.responses == null) return;
+            const faceAnnotations = resData.responses[0].faceAnnotations;
+            let faces = [];
+            console.log("Faces:");
+            faceAnnotations.forEach((face, i) => {
+                console.log(`  Face #${i + 1}:`);
+                console.log(`    Joy: ${face.joyLikelihood}`);
+                console.log(`    Anger: ${face.angerLikelihood}`);
+                console.log(`    Sorrow: ${face.sorrowLikelihood}`);
+                console.log(`    Surprise: ${face.surpriseLikelihood}`);
+                faces.push({
+                    "joyLikelihood": face.joyLikelihood,
+                    "angerLikelihood": face.angerLikelihood,
+                    "sorrowLikelihood": face.sorrowLikelihood,
+                    "surpriseLikelihood": face.surpriseLikelihood
+                })
+            })
+            navigation.navigate("Results", { faces });
+        });
     }
 
     const retakePic = () => {
