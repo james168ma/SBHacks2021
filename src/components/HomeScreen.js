@@ -11,7 +11,7 @@ function HomeScreen({ navigation }) {
             onPress = {() => navigation.navigate('Camera')}
         />
        <Button title="Results" 
-            onPress = {() => navigation.navigate('Results')}
+            onPress = {() => navigation.navigate('Results', { faces: null })}
         />
          <StatusBar style="auto" />
         </View>

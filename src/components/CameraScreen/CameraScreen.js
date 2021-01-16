@@ -97,7 +97,6 @@ function CameraPreview({photo, retakePicture, savePhoto}){
     );
 }
 
-// TODO: Implement savePhoto()
 // TODO: Styling the buttons (consider using icons)
 function CameraScreen({ navigation }) {
     const [hasPermission, setHasPermission] = React.useState(null);
@@ -177,23 +176,35 @@ function CameraScreen({ navigation }) {
             body: JSON.stringify(data)
         }).then(response => response.json())
         .then(resData => {
+            // no response
             if(resData == null || resData.responses == null) return;
+
             const faceAnnotations = resData.responses[0].faceAnnotations;
+
+            // no faces in picture
+            if(faceAnnotations == null) {
+                navigation.navigate("Results", { faces: [] });
+                return;
+            }
+
             let faces = [];
             console.log("Faces:");
             faceAnnotations.forEach((face, i) => {
                 console.log(`  Face #${i + 1}:`);
+                console.log(`    Detection Confidence: ${face.detectionConfidence}`);
                 console.log(`    Joy: ${face.joyLikelihood}`);
                 console.log(`    Anger: ${face.angerLikelihood}`);
                 console.log(`    Sorrow: ${face.sorrowLikelihood}`);
                 console.log(`    Surprise: ${face.surpriseLikelihood}`);
                 faces.push({
+                    "detectionConfidence": face.detectionConfidence,
                     "joyLikelihood": face.joyLikelihood,
                     "angerLikelihood": face.angerLikelihood,
                     "sorrowLikelihood": face.sorrowLikelihood,
                     "surpriseLikelihood": face.surpriseLikelihood
                 })
             })
+
             navigation.navigate("Results", { faces });
         });
     }
