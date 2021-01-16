@@ -1,0 +1,12 @@
+{
+  "name": "emotion_detector_app",
+  "displayName": "emotion_detector_app",
+  "expo": {
+    "name": "emotion_detector_app",
+    "slug": "emotion_detector_app",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
