@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Button, TouchableOpacity, ImageBackground, Imag
 import { StatusBar } from 'expo-status-bar';
 import PropTypes from 'prop-types';
 import { Camera } from 'expo-camera';
+import { apikey } from '../../secret.js'; // remember to add this file!
 
 let camera = null;
 
@@ -136,14 +137,46 @@ function CameraScreen({ navigation }) {
         }
         // TYPE: photo is an object with properties { base64, uri, width, height}
         const photo = await camera.takePictureAsync({base64: true});
-        console.log(photo);
+        // console.log(photo);
         setPreviewVisible(true);
         setCapturedImage(photo);
     };
 
     // Use CapturedImage: an object with properties { base64, uri, width, height}
-    const savePhoto = () => {
+    const savePhoto = async () => {
+        if (capturedImage == null) {
+            return;
+        }
 
+        // vision api url
+        const url = "https://vision.googleapis.com/v1/images:annotate?key=" + apikey;
+
+        // body of the post request
+        const data = {
+            "requests": [
+                {
+                    "image": {
+                        "content": capturedImage["base64"]
+                    },
+                    "features": [
+                        {
+                            "type": "FACE_DETECTION",
+                            "maxResults": 5
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // get the response from the post request
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "appplication/json"
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json())
+        .then(data => console.log(data));
     }
 
     const retakePic = () => {

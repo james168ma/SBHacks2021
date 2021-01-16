@@ -8,15 +8,16 @@
     "test": "jest"
   },
   "dependencies": {
+    "@google-cloud/vision": "^2.3.0",
     "@react-native-community/masked-view": "0.1.10",
     "@react-navigation/native": "^5.9.0",
     "@react-navigation/stack": "^5.13.0",
-    "@google-cloud/vision": "^2.3.0",
     "expo": "~40.0.0",
     "expo-camera": "~9.1.0",
     "expo-splash-screen": "~0.8.0",
     "expo-status-bar": "~1.0.3",
     "expo-updates": "~0.4.0",
+    "fetch": "^1.1.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "~0.63.4",
