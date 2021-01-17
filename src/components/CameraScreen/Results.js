@@ -75,7 +75,6 @@ function ResultsScreen({ navigation, route }) {
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Results Screen</Text>
-        <Text>Display Results Here</Text>
         {resultsText}
         {adviceText}
         <Button title="Home" 

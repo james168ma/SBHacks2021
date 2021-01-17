@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Button, TouchableOpacity, ImageBackground, Imag
 import { StatusBar } from 'expo-status-bar';
 import PropTypes from 'prop-types';
 import { Camera } from 'expo-camera';
+import Loader from '../Loader/Loader.js';
 import { apikey } from '../../secret.js'; // remember to add this file!
 
 let camera = null;
@@ -104,6 +105,7 @@ function CameraScreen({ navigation }) {
     const [previewVisible, setPreviewVisible] = React.useState(false);
     const [capturedImage, setCapturedImage] = React.useState(null);
     const [flashMode, setFlashMode] = React.useState('off');
+    const [loading, setLoading] = React.useState(false);
 
     
     React.useEffect(() => {
@@ -147,6 +149,8 @@ function CameraScreen({ navigation }) {
             return;
         }
 
+        setLoading(true);
+
         // vision api url
         const url = "https://vision.googleapis.com/v1/images:annotate?key=" + apikey;
 
@@ -168,45 +172,47 @@ function CameraScreen({ navigation }) {
         };
 
         // get the response from the post request
-        fetch(url, {
+        const res = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "appplication/json"
             },
             body: JSON.stringify(data)
-        }).then(response => response.json())
-        .then(resData => {
-            // no response
-            if(resData == null || resData.responses == null) return;
+        })
+        
+        setLoading(false);
 
-            const faceAnnotations = resData.responses[0].faceAnnotations;
+        const resData = await res.json();
 
-            // no faces in picture
-            if(faceAnnotations == null) {
-                navigation.navigate("Results", { faces: [] });
-                return;
-            }
+        // no response
+        if(resData == null || resData.responses == null) return;
 
-            let faces = [];
-            console.log("Faces:");
-            faceAnnotations.forEach((face, i) => {
-                console.log(`  Face #${i + 1}:`);
-                console.log(`    Detection Confidence: ${face.detectionConfidence}`);
-                console.log(`    Joy: ${face.joyLikelihood}`);
-                console.log(`    Anger: ${face.angerLikelihood}`);
-                console.log(`    Sorrow: ${face.sorrowLikelihood}`);
-                console.log(`    Surprise: ${face.surpriseLikelihood}`);
-                faces.push({
-                    "detectionConfidence": face.detectionConfidence,
-                    "joyLikelihood": face.joyLikelihood,
-                    "angerLikelihood": face.angerLikelihood,
-                    "sorrowLikelihood": face.sorrowLikelihood,
-                    "surpriseLikelihood": face.surpriseLikelihood
-                })
+        const faceAnnotations = resData.responses[0].faceAnnotations;
+
+        // no faces in picture
+        if(faceAnnotations == null) {
+            navigation.navigate("Results", { faces: [] });
+            return;
+        }
+
+        let faces = [];
+        console.log("Faces:");
+        faceAnnotations.forEach((face, i) => {
+            console.log(`  Face #${i + 1}:`);
+            console.log(`    Detection Confidence: ${face.detectionConfidence}`);
+            console.log(`    Joy: ${face.joyLikelihood}`);
+            console.log(`    Anger: ${face.angerLikelihood}`);
+            console.log(`    Sorrow: ${face.sorrowLikelihood}`);
+            console.log(`    Surprise: ${face.surpriseLikelihood}`);
+            faces.push({
+                "detectionConfidence": face.detectionConfidence,
+                "joyLikelihood": face.joyLikelihood,
+                "angerLikelihood": face.angerLikelihood,
+                "sorrowLikelihood": face.sorrowLikelihood,
+                "surpriseLikelihood": face.surpriseLikelihood
             })
-
-            navigation.navigate("Results", { faces });
-        });
+        })
+        navigation.navigate("Results", { faces });
     }
 
     const retakePic = () => {
@@ -215,6 +221,9 @@ function CameraScreen({ navigation }) {
     }
     return (
       <View style={cam_styles.container}>
+          {loading ? (
+              <Loader/>
+          ) : (<></>)}
           {previewVisible && capturedImage ? (
               <CameraPreview photo={capturedImage} retakePicture={retakePic} savePhoto={savePhoto} />
           ) : (
@@ -234,7 +243,7 @@ function CameraScreen({ navigation }) {
                             backgroundColor: flashMode === 'off' ? '#000000' : '#FFFF00',
                             alignSelf: 'flex-start',
                             alignItems: 'baseline',
-                            borderRadius: '50%',
+                            borderRadius: 0.5,
                             height: 25,
                             width: 25}}
                   >
