@@ -66,13 +66,20 @@ const cam_styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     optionButton: {
-        height: 40,
-        alignItems: 'center',
-        borderRadius: 4
+        elevation: 8,
+        backgroundColor: "#009688",
+        borderRadius: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+        marginTop: 5,
+        margin: 8
     },
     optionText: {
-        color: '#fff', 
-        fontSize: 20
+        fontSize: 15,
+        color: "#fff",
+        fontWeight: "bold",
+        alignSelf: "center",
+        textTransform: "uppercase"
     }
   });
 
@@ -86,7 +93,7 @@ function CameraPreview({photo, retakePicture, savePhoto, uploadPhoto}){
                 <View style={prev_styles.options}>
                     <TouchableOpacity onPress={retakePicture} 
                         style={prev_styles.optionButton}
-                    ><Text style={prev_styles.optionText}>Re-take Picture</Text>
+                    ><Text style={prev_styles.optionText}>Re-take</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={savePhoto} 
                         style={prev_styles.optionButton}

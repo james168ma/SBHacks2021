@@ -208,7 +208,7 @@ function ResultsScreen({ navigation, route }) {
     }, []);
 
     return (
-        <View style={{ flex: 1, alignItems: 'center'}}>
+        <View style={{ flex: 1, alignItems: 'center', backgroundColor: '#b3f542'}}>
           {finalResults}
           {finalAdvice}
           <View style={{flexDirection: 'row', marginTop: 'auto', marginBottom: 40}}>
@@ -232,7 +232,7 @@ function ResultsScreen({ navigation, route }) {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor: '#b3f542',
       alignItems: 'center',
       justifyContent: 'center',
     },

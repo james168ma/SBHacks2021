@@ -29,6 +29,7 @@ function HomeScreen({ navigation }) {
       backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'space-evenly',
+      backgroundColor: '#b3f542'
     },
     title: {
         position: 'absolute',
