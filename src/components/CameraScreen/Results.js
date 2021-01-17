@@ -88,17 +88,6 @@ function ResultsScreen({ navigation, route }) {
 
       console.log(maxLikelihood, maxEmotions);
 
-      // LHEmotions.forEach(emotion => {
-      //   if(LHNum[face[emotion]] >= maxLikelihood) {
-      //     maxLikelihood = LHNum[face[emotion]];
-      //     if(LHNum[face[maxEmotions[maxEmotions.length - 1]]] < maxLikelihood) { // remove previous
-      //       maxEmotions = [emotion];
-      //     } else {
-      //       maxEmotions.push(emotion);
-      //     }
-      //   }
-      // });
-
       let advTxtLine1;
 
       if(maxLikelihood == -1) {
