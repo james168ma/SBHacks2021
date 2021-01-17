@@ -59,11 +59,15 @@ function Gallery({ navigation }) {
   }
   const styles = StyleSheet.create({
     container: {
-      paddingTop: 50,
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap'
     },
     pic: {
-      width: 50,
-      height: 100,
+      width: 100,
+      height: 160,
+      margin: 15,
+      borderRadius: 10
     },
   });
 

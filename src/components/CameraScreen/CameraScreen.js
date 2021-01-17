@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, Button, TouchableOpacity, ImageBackground, Image, AsyncStorage } from 'react-native';
+import { StyleSheet, View, Text, Button, TouchableOpacity, ImageBackground, Image, AsyncStorage, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import PropTypes from 'prop-types';
 import { Camera } from 'expo-camera';
@@ -255,7 +255,7 @@ function CameraScreen({ navigation }) {
         let task = ref.put(blob).then( () => {
             console.log('put blob!');
         }).catch((err) => {console.log(err)});
-        console.log(ref);
+        Alert.alert('Uploaded successfully to Firebase!');
     }
     return ( 
       <View style={cam_styles.container}>
