@@ -2,8 +2,17 @@ import * as React from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import PropTypes from 'prop-types';
+import firestore from '../../firebase.js';
+import firebase from 'firebase';
+import { max } from 'react-native-reanimated';
+
+
+const db = firestore;
+const suggestionsRef = db.collection("suggestions");
 
 function ResultsScreen({ navigation, route }) {
+    const [suggestText, setSuggestText] = React.useState("");
+
     const LHNum = { // likelihood number
       "UNKNOWN":       -1,
       "VERY_UNLIKELY":  0,
@@ -86,8 +95,6 @@ function ResultsScreen({ navigation, route }) {
         }
       }
 
-      console.log(maxLikelihood, maxEmotions);
-
       let advTxtLine1;
 
       if(maxLikelihood == -1) {
@@ -101,24 +108,64 @@ function ResultsScreen({ navigation, route }) {
       } else if(maxLikelihood == 3) {
         advTxtLine1 = "It's likely that this person is feeling ";
       } else if(maxLikelihood == 4) {
-        advTxtLine1 = "It's very likely that this person is feeling";
+        advTxtLine1 = "It's very likely that this person is feeling ";
       }
 
-      console.log(advTxtLine1);
+      if(maxLikelihood > 0) {
+        maxEmotions = [maxEmotions[0]]
+        maxEmotions.forEach(async (emotion, i) => {
+          if(i == 0) {
+            advTxtLine1 += emotion + ". You may want to ";
+          } else {
+            if(maxLikelihood < 3) { // not likely/possible
+              advTxtLine1 += "It's also possible that this person may be feeling " + emotion + ". You may want to ";
+            } else { // likely
+              advTxtLine1 += "It's also likely that this person may be feeling " + emotion + ". You may want to ";
+            }
+          }
 
-      // for loop to add advice here
+          // get number of suggestions
+          let numSuggestions;
+          try { 
+            const res = await suggestionsRef.doc(emotion).get();
+            if(res.exists) {
+                numSuggestions = res.data().numSuggestions;
+            } else {
+              console.log("No such document!");
+              numSuggestions = -1;
+            }
+          } catch(err) {
+            console.log(err);
+          }
+
+          // get suggestions
+          if(numSuggestions != -1) {
+            let random = Math.floor((Math.random() * numSuggestions));
+            let collectionName = emotion + "Suggestions";
+
+            suggestionsRef.doc(emotion).collection(collectionName).where("id", ">=", random).orderBy("id").limit(1)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach(doc => {
+                advTxtLine1 += doc.data().suggestion;
+                setSuggestText(advTxtLine1);
+              })
+            }).catch(err => {
+              console.log(err);
+            })
+          }
+        });
+      }
       
       const detectionConfidenceString = (route.params.faces[0].detectionConfidence * 100).toFixed(0).toString();
       adviceText = (
         <>
           <Text>We are {detectionConfidenceString}% confident in our results.</Text>
-          <Text>{advTxtLine1}</Text>
+          <Text>{suggestText}</Text>
         </>
       );
     }
 
-
-    console.log(route.params.faces);
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Results Screen</Text>
