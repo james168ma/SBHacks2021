@@ -24,7 +24,8 @@ function AuthScreen({ navigation }) {
                 const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
                 let info = await response.json();
                 await AsyncStorage.setItem('fbToken', token.toString());
-                if (expires !== null) {
+                if (expires !== undefined) {
+                    console.log('expires:' + expires);
                     await AsyncStorage.setItem('expire', expires.toString());
                 }
                 await AsyncStorage.setItem('userid', info.id.toString());

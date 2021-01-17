@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, Button, TouchableOpacity, ImageBackground, Image } from 'react-native';
+import { StyleSheet, View, Text, Button, TouchableOpacity, ImageBackground, Image, AsyncStorage } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import PropTypes from 'prop-types';
 import { Camera } from 'expo-camera';
 import Loader from '../Loader/Loader.js';
 import { apikey } from '../../secret.js'; // remember to add this file!
-
+import firestore from '../../firebase.js';
+import firebase from 'firebase';
 
 let camera = null;
 
@@ -65,7 +66,6 @@ const cam_styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     optionButton: {
-        width: 130,
         height: 40,
         alignItems: 'center',
         borderRadius: 4
@@ -78,7 +78,7 @@ const cam_styles = StyleSheet.create({
 
   //TODO: Fix the styling of the buttons for this component
   // TYPE: photo is an object with properties { base64, uri, width, height}
-function CameraPreview({photo, retakePicture, savePhoto}){
+function CameraPreview({photo, retakePicture, savePhoto, uploadPhoto}){
     return (
         <View style={prev_styles.previewContainer}>
             <ImageBackground source={{uri: photo.uri}} style={{flex: 1}}> 
@@ -90,7 +90,11 @@ function CameraPreview({photo, retakePicture, savePhoto}){
                     </TouchableOpacity>
                     <TouchableOpacity onPress={savePhoto} 
                         style={prev_styles.optionButton}
-                    ><Text style={prev_styles.optionText}>Save photo</Text>
+                    ><Text style={prev_styles.optionText}>Analyze</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={uploadPhoto} 
+                        style={prev_styles.optionButton}
+                    ><Text style={prev_styles.optionText}>Upload</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -220,13 +224,41 @@ function CameraScreen({ navigation }) {
         setPreviewVisible(false);
         setCapturedImage(null);
     }
-    return (
+
+    const uploadImage = async () => {
+        const userToken = await AsyncStorage.getItem('fbToken'); 
+        const usrid = await AsyncStorage.getItem('userid');
+        if (userToken === null || usrid === null) {
+          navigation.navigate('AuthScreen');
+        }
+        const credential = firebase.auth.FacebookAuthProvider.credential(userToken);
+        firebase
+        .auth()
+        .signInWithCredential(credential)
+        .catch(error => {
+          console.log('ERRORORORR:' + error);
+        });
+        console.log(capturedImage.uri);
+        console.log(firebase.auth());
+        const response = await fetch(capturedImage.uri);
+        const blob = await response.blob();
+        let time = 'image1.jpg';
+        console.log(usrid);
+        var ref2 = firebase.storage().ref();
+        var ref = ref2.child('images' + '/' + usrid + '/' + time);
+        let task = ref.put(blob).then( () => {
+            console.log('put blob!');
+        }).catch((err) => {console.log(err)});
+        console.log(ref);
+    }
+    return ( 
       <View style={cam_styles.container}>
           {loading ? (
               <Loader/>
           ) : (<></>)}
           {previewVisible && capturedImage ? (
-              <CameraPreview photo={capturedImage} retakePicture={retakePic} savePhoto={savePhoto} />
+              <CameraPreview photo={capturedImage} retakePicture={retakePic} savePhoto={savePhoto} 
+              uploadPhoto={uploadImage} />
           ) : (
         <Camera style={cam_styles.camera} type={type} ref={(r) => {
             camera = r

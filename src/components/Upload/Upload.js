@@ -1,3 +1,0 @@
-const uploadImage = async () => {
-    if ()
-}

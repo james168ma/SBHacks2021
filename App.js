@@ -9,7 +9,7 @@ import CameraScreen from './src/components/CameraScreen/CameraScreen';
 import ResultsScreen from './src/components/CameraScreen/Results';
 import AuthLoadingScreen from './src/components/Authentication/authLoadingScreen';
 import AuthScreen from './src/components/Authentication/AuthScreen';
-
+import Gallery from './src/components/Gallery/Gallery';
 
 const Stack = createStackNavigator();
 
@@ -22,6 +22,7 @@ function App() {
         <Stack.Screen name="Results" component={ResultsScreen} />
         <Stack.Screen name="AuthLoading" component={AuthLoadingScreen} />
         <Stack.Screen name="AuthScreen" component={AuthScreen} />
+        <Stack.Screen name="Gallery" component={Gallery} />
       </Stack.Navigator>
     </NavigationContainer>
   );
