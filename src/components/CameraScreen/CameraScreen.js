@@ -6,6 +6,7 @@ import { Camera } from 'expo-camera';
 import Loader from '../Loader/Loader.js';
 import { apikey } from '../../secret.js'; // remember to add this file!
 
+
 let camera = null;
 
 const cam_styles = StyleSheet.create({

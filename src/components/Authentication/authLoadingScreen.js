@@ -5,7 +5,12 @@ function AuthLoadingScreen({ navigation }) {
     React.useEffect(() => {
         (async () => {
           const userToken = await AsyncStorage.getItem('fbToken'); 
-          navigation.navigate(userToken !== null ? 'Home' : 'AuthScreen'); // 'Home'
+          if (userToken) {
+              navigation.goBack();
+          }
+          else {
+              navigation.navigate('AuthScreen');
+          }
         })();
     }, []);
     return (
