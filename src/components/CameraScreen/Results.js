@@ -87,20 +87,17 @@ function ResultsScreen({ navigation, route }) {
       for(const [emotion, LH] of Object.entries(LHEmotions)) {
         if(LHNum[face[LH]] >= maxLikelihood) {
           maxLikelihood = LHNum[face[LH]];
-          if(LHNum[face[LHEmotions[maxEmotions[maxEmotions.length - 1]]]] < maxLikelihood) { // remove previous
-            maxEmotions = [emotion];
-          } else {
-            maxEmotions.push(emotion);
-          }
+          maxEmotions = [emotion];
         }
       }
 
       let advTxtLine1;
+      let specialTxt = null;
 
       if(maxLikelihood == -1) {
-        advTxtLine1 = "WOW! It looks like all of this person's emotions are unknown! They're an enigma!";
+        specialTxt = "WOW! It looks like all of this person's emotions are unknown! They're an enigma!";
       } else if(maxLikelihood == 0) {
-        advTxtLine1 = "Looooooool. This person is feeling nothing right now. Completely empty inside. Nonthing's wrong with that though :)"
+        specialTxt = "Looooooool. This person is feeling nothing right now. Completely empty inside. Nonthing's wrong with that though :)"
       } else if(maxLikelihood == 1) {
         advTxtLine1 = "Uuuh... it's not likely, but this person may be feeling ";
       } else if(maxLikelihood == 2) {
@@ -113,6 +110,7 @@ function ResultsScreen({ navigation, route }) {
 
       if(maxLikelihood > 0) {
         maxEmotions = [maxEmotions[0]]
+        console.log("maxEmotions: ", maxEmotions);
         maxEmotions.forEach(async (emotion, i) => {
           if(i == 0) {
             advTxtLine1 += emotion + ". You may want to ";
@@ -130,6 +128,7 @@ function ResultsScreen({ navigation, route }) {
             const res = await suggestionsRef.doc(emotion).get();
             if(res.exists) {
                 numSuggestions = res.data().numSuggestions;
+                console.log(numSuggestions);
             } else {
               console.log("No such document!");
               numSuggestions = -1;
@@ -146,8 +145,11 @@ function ResultsScreen({ navigation, route }) {
             suggestionsRef.doc(emotion).collection(collectionName).where("id", ">=", random).orderBy("id").limit(1)
             .get()
             .then((querySnapshot) => {
+              console.log("sizeOf querySnapshot:", querySnapshot.length);
               querySnapshot.forEach(doc => {
+                console.log("one query");
                 advTxtLine1 += doc.data().suggestion;
+                console.log(advTxtLine1);
                 setSuggestText(advTxtLine1);
               })
             }).catch(err => {
@@ -161,6 +163,11 @@ function ResultsScreen({ navigation, route }) {
       adviceText = (
         <>
           <Text>We are {detectionConfidenceString}% confident in our results.</Text>
+          { specialTxt != null ? (
+            <Text>{specialTxt}</Text>
+          ): (
+            <></>
+          )}
           <Text>{suggestText}</Text>
         </>
       );
