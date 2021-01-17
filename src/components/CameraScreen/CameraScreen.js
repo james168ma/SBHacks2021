@@ -242,7 +242,7 @@ function CameraScreen({ navigation }) {
         console.log(firebase.auth());
         const response = await fetch(capturedImage.uri);
         const blob = await response.blob();
-        let time = 'image1.jpg';
+        let time = 'image1.jpg'; //new Date
         console.log(usrid);
         var ref2 = firebase.storage().ref();
         var ref = ref2.child('images' + '/' + usrid + '/' + time);
