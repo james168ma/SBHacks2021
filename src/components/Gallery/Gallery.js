@@ -4,10 +4,13 @@ import { StatusBar } from 'expo-status-bar';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import firebase from 'firebase';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { apikey } from '../../secret.js'; // remember to add this file!
 
 function Gallery({ navigation }) {
     const [allimgs, setallimgs ] = React.useState(null);
     var new_map = [];
+
     const oneTime = async () => {
         var allImgs = [];
         const userToken = await AsyncStorage.getItem('fbToken'); 
@@ -36,8 +39,8 @@ function Gallery({ navigation }) {
         }
         console.log('end');
         console.log(allImgs);
-        new_map = allImgs.map( (img, i) => { 
-            return (<Image style={styles.pic} source={{uri: img}} />)
+        new_map = allImgs.map( (img, i) => { //TODO: add onclick()
+            return (<Image key={i} style={styles.pic} source={{uri: img}} />)
         });
         setallimgs(new_map);
         
@@ -49,13 +52,7 @@ function Gallery({ navigation }) {
     
 
     return (
-        <View style={styles.container}>
-        <Image
-          style={styles.tinyLogo}
-          source={{
-            uri: 'https://reactnative.dev/img/tiny_logo.png',
-          }}
-        />
+      <View style={styles.container}>
         {allimgs}
       </View>
     );
