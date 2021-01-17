@@ -6,12 +6,15 @@ import { useEffect } from 'react';
 import firebase from 'firebase';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { apikey } from '../../secret.js'; // remember to add this file!
+import Loader from '../Loader/Loader.js';
 
 function Gallery({ navigation }) {
     const [allimgs, setallimgs ] = React.useState(null);
+    const [loading, setLoading] = React.useState(false);
     var new_map = [];
 
     const oneTime = async () => {
+        setLoading(true);
         var allImgs = [];
         const userToken = await AsyncStorage.getItem('fbToken'); 
         const usrid = await AsyncStorage.getItem('userid');
@@ -45,6 +48,7 @@ function Gallery({ navigation }) {
         setallimgs(new_map);
         
         console.log(allimgs);
+        setLoading(false);
     }
     React.useEffect(() => {
         oneTime();
@@ -53,6 +57,9 @@ function Gallery({ navigation }) {
 
     return (
       <View style={styles.container}>
+        {loading ? (
+          <Loader/>
+        ) : (<></>)}
         {allimgs}
       </View>
     );
